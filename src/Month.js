@@ -267,11 +267,19 @@ class MonthView extends React.Component {
   }
 
   measureRowLimit() {
-    const {
-      eventHeight,
-      rowLimit,
-      leftoverSpace,
-    } = this.refs.slotRow.getRowMetrics()
+    let eventHeight, rowLimit, leftoverSpace
+
+    if (this.refs.slotRow) {
+      const rowMetrics = this.refs.slotRow.getRowMetrics()
+      eventHeight = rowMetrics.eventHeight
+      rowLimit = rowMetrics.rowLimit
+      leftoverSpace = rowMetrics.leftoverSpace
+    } else {
+      // Completely arbitrary
+      eventHeight = 10
+      rowLimit = 1
+      leftoverSpace = 1
+    }
     this.setState({
       needLimitMeasure: false,
       rowLimit,
