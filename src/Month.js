@@ -75,6 +75,7 @@ class MonthView extends React.Component {
     this._pendingSelection = []
     this.state = {
       rowLimit: 5,
+      leftoverSpace: 0,
       needLimitMeasure: true,
     }
   }
@@ -148,7 +149,12 @@ class MonthView extends React.Component {
       getters,
     } = this.props
 
-    const { needLimitMeasure, rowLimit } = this.state
+    const {
+      needLimitMeasure,
+      rowLimit,
+      leftoverSpace,
+      eventHeight,
+    } = this.state
 
     events = eventsForWeek(events, week[0], week[week.length - 1], accessors)
 
@@ -157,7 +163,7 @@ class MonthView extends React.Component {
     return (
       <DateContentRow
         key={weekIdx}
-        ref={weekIdx === 0 ? 'slotRow' : undefined}
+        ref={events.length > 0 ? 'slotRow' : undefined}
         container={this.getContainer}
         className="rbc-month-row"
         getNow={getNow}
@@ -165,6 +171,8 @@ class MonthView extends React.Component {
         range={week}
         events={events}
         maxRows={rowLimit}
+        eventHeight={eventHeight}
+        leftoverSpace={leftoverSpace}
         selected={selected}
         selectable={selectable}
         components={components}
@@ -259,9 +267,24 @@ class MonthView extends React.Component {
   }
 
   measureRowLimit() {
+    let eventHeight, rowLimit, leftoverSpace
+
+    if (this.refs.slotRow) {
+      const rowMetrics = this.refs.slotRow.getRowMetrics()
+      eventHeight = rowMetrics.eventHeight
+      rowLimit = rowMetrics.rowLimit
+      leftoverSpace = rowMetrics.leftoverSpace
+    } else {
+      // Completely arbitrary
+      eventHeight = 10
+      rowLimit = 1
+      leftoverSpace = 1
+    }
     this.setState({
       needLimitMeasure: false,
-      rowLimit: this.refs.slotRow.getRowLimit(),
+      rowLimit,
+      leftoverSpace,
+      eventHeight,
     })
   }
 
