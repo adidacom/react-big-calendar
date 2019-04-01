@@ -12,12 +12,7 @@ class EventRow extends React.Component {
     ...EventRowMixin.defaultProps,
   }
   render() {
-    let {
-      segments,
-      slotMetrics: { slots },
-      className,
-      eventRef,
-    } = this.props
+    let { segments, slotMetrics: { slots }, className, eventRef } = this.props
 
     let lastEnd = 1
 
