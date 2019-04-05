@@ -44,6 +44,7 @@ const clickInterval = 250
 
 class Selection {
   constructor(node, { global = false, longPressThreshold = 250 } = {}) {
+    this.isDetached = false;
     this.container = node
     this.globalMouse = !node || global
     this.longPressThreshold = longPressThreshold
@@ -90,6 +91,7 @@ class Selection {
   }
 
   teardown() {
+    this.isDetached = true;
     this.listeners = Object.create(null)
     this._onTouchMoveWindowListener && this._onTouchMoveWindowListener.remove()
     this._onInitialEventListener && this._onInitialEventListener.remove()
@@ -187,6 +189,10 @@ class Selection {
   }
 
   _handleInitialEvent(e) {
+    if (this.isDetached) {
+      return
+    }
+
     const { clientX, clientY, pageX, pageY } = getEventCoordinates(e)
     let node = this.container(),
       collides,
